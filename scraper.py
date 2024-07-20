@@ -3,7 +3,7 @@ import re
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 import pyperclip
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 import time 
 from mock_data import mock_data
 from dataclasses import dataclass
@@ -15,11 +15,11 @@ class Condition:
 
 @dataclass
 class ConditionData:
-    gene: str
-    conditions: List[Condition]
-    condition_references: List[str]
-    suppliments: List[Condition]
-    suppliment_references: List[str]
+    gene: Optional[str] = None
+    conditions: Optional[Condition] = None
+    condition_references: Optional[List[str]] = None
+    suppliments: Optional[List[Condition]] = None
+    suppliment_references: Optional[List[str]] = None
 
 def parse_ellipses_result(data: str) -> Tuple[List[Condition], List[str]]:
     # Split the data into conditions and references
@@ -85,7 +85,7 @@ def scrapeEpsilon() -> List[ConditionData]:
         parsed = parse_ellipses_result(copied_text)
         condition.conditions = parsed[0]
         condition.condition_references = parsed
-        data.append(copied_text)
+        data.append(condition)
 
     for driver in drivers:
         driver.quit()
