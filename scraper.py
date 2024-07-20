@@ -21,34 +21,38 @@ class ConditionData:
     suppliments: Optional[List[Condition]] = None
     suppliment_references: Optional[List[str]] = None
 
-def parse_ellipses_result(data: str) -> Tuple[List[Condition], List[str]]:
-    # Split the data into conditions and references
-    parts = data.split('\n[')
-    conditions_text = parts[0]
-    references_text = '[' + parts[1] if len(parts) > 1 else ""
+# def parse_ellipses_result(data: str) -> Tuple[List[Condition], List[str]]:
+#     # Split the data into conditions and references
+#     parts = data.split('\n[')
+#     conditions_text = parts[0]
+#     references_text = '[' + parts[1] if len(parts) > 1 else ""
+#     # print(references_text)
+#     print(parts[1])
 
-    # Parse conditions
-    condition_pattern = r'\*\*(.*?)\*\*: (.*?)(?=\n-|\Z)'
-    conditions = []
-    for match in re.finditer(condition_pattern, conditions_text, re.DOTALL):
-        name = match.group(1)
-        description = match.group(2).strip()
-        conditions.append(Condition(name=name, description=description))
+#     # Parse conditions
+#     condition_pattern = r'\*\*(.*?)\*\*: (.*?)(?=\n-|\Z)'
+#     conditions = []
+#     for match in re.finditer(condition_pattern, conditions_text, re.DOTALL):
+#         name = match.group(1)
+#         description = match.group(2).strip()
+#         conditions.append(Condition(name=name, description=description))
 
-    # Parse references
-    reference_pattern = r'\[(\d+(?:\.\d+)?)\](.*?)(?=\n\[|\Z)'
-    references = []
-    for match in re.finditer(reference_pattern, references_text, re.DOTALL):
-        references.append(match.group(2).strip())
+#     # Parse references
+#     reference_pattern = r'\[(\d+(?:\.\d+)?)\](.*?)(?=\n\[|\Z)'
+#     references = []
+#     for match in re.finditer(reference_pattern, references_text, re.DOTALL):
+#         result = match.group(2).strip()
+#         print(f"the refernce is: {result}")
+#         references.append(result)
 
-    return (conditions, references)
+#     return (conditions, references)
 
 def test_parse_hla_b27_data():
     return parse_ellipses_result(mock_data[0])
 
-def scrapeEpsilon() -> List[ConditionData]:
-    genes = ["HLA-B27",  "ADRB3"] # "DAX1 (NR0B1)", "WNT10A", "TCF7L2", "BRCA1", "BRCA2", "SHANK3", "HLA-C", "CHRM2", "TSEN54",]
-    # gene_talents = ["CHRM2", "TSEN54", "ADRB3", ]
+def scrapeEpsilon(genes: List[str]) -> List[ConditionData]:
+    # genes = ["HLA-B27",  "ADRB3"] # "DAX1 (NR0B1)", "WNT10A", "TCF7L2", "BRCA1", "BRCA2", "SHANK3", "HLA-C", "CHRM2", "TSEN54",]
+    # # gene_talents = ["CHRM2", "TSEN54", "ADRB3", ]
     drivers = []
     data: List[ConditionData] = []
     for gene in genes:
@@ -84,7 +88,7 @@ def scrapeEpsilon() -> List[ConditionData]:
         condition.gene = genes[i]
         parsed = parse_ellipses_result(copied_text)
         condition.conditions = parsed[0]
-        condition.condition_references = parsed
+        condition.condition_references = parsed[1]
         data.append(condition)
 
     for driver in drivers:
@@ -129,5 +133,57 @@ def scrapeEpsilon() -> List[ConditionData]:
     # ===
 
 
+
+def test_matcher():
+
+    def parse_ellipses_result(data: str) -> Tuple[List[Condition], List[str]]:
+        # Split the data into conditions and references
+        parts = re.split(r'\n(\[\d+\])', data, 1)
+        conditions_text = parts[0]
+        references_text = parts[1] + parts[2] if len(parts) > 2 else ""
+
+        print("Conditions text:")
+        print(conditions_text)
+        print("\nReferences text:")
+        print(references_text)
+
+        # Parse conditions
+        condition_pattern = r'\*\*(.*?)\*\*: (.*?)(?=\n-|\Z)'
+        conditions = []
+        for match in re.finditer(condition_pattern, conditions_text, re.DOTALL):
+            name = match.group(1)
+            description = match.group(2).strip()
+            conditions.append(Condition(name=name, description=description))
+
+        # Parse references
+        reference_pattern = r'\[(\d+(?:\.\d+)?)\]\s*(.*?)(?=\n\[|\Z)'
+        references = []
+        for match in re.finditer(reference_pattern, references_text, re.DOTALL):
+            result = match.group(2).strip()
+            references.append(result)
+
+        print("\nParsed references:")
+        print(references)
+
+        return (conditions, references)
+
+    # Test the function
+    test_data = """- **Ankylosing Spondylitis (AS)**: HLA-B27 is most strongly associated with ankylosing spondylitis, a chronic inflammatory arthritis affecting the axial skeleton  [6] [5] [12]. AS is characterized by inflammatory back pain, sacroiliitis, and can lead to axial fusion and deformity  [12].
+    - **Spondyloarthropathies (SpA)**: HLA-B27 is linked to a group of interrelated inflammatory conditions known as spondyloarthropathies, which include psoriatic arthritis, reactive arthritis, and arthritis associated with inflammatory bowel disease  [9] [8] [11]. These conditions share features like inflammatory back pain, asymmetric arthritis, and enthesitis  [9].
+    [1] Original Article 10
+    [2] Anterior Uveitis, Inflammatory Bowel Disease, and Ankylosing Spondylitis in a HLA-B27-positive Woman
+    [3] Animal models of HLA-B27-associated diseases."""
+
+    conditions, references = parse_ellipses_result(test_data)
+
+    print("\nFinal Results:")
+    print("Conditions:")
+    for condition in conditions:
+        print(f"- {condition.name}: {condition.description}")
+
+    print("\nReferences:")
+    for ref in references:
+        print(f"- {ref}")
+ 
 if __name__ == "__main__":
-    print(test_parse_hla_b27_data())
+    print(test_matcher())
