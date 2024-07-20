@@ -53,7 +53,7 @@ def supplement_link(supplement: str):
 def render_condition_component(condition_data: ConditionData):
     st.header(f"Gene: {condition_data.gene}")
     
-    st.subheader("Associated Conditions")
+    st.subheader(f'Based on your DNA, we have found you have the variant {condition_data.gene}. Here are the associated conditions:')
     for condition in condition_data.conditions:
         st.write(f"**{condition.name}**: {condition.description}")
     
@@ -61,7 +61,7 @@ def render_condition_component(condition_data: ConditionData):
         for i, ref in enumerate(condition_data.condition_references, 1):
             st.write(f"[{i}] {ref}")
     
-    st.subheader("Recommended Supplements")
+    st.subheader("Here are some supplements personalized for you to help modulate gene expression:")
     for supplement in condition_data.suppliments:
         st.write(f"**{supplement_link(supplement.name)}**: {supplement.description}")
         # supplement_link(supplement.name)
@@ -78,7 +78,7 @@ def run_streamlit(scrape_provider):
     )
     st.title("Welcome to HealthAssess @ AiTX Hack")
     st.header("About")
-    st.write("This is a section about something interesting.")
+    st.write("Welcome to HeathAssess, your personal chat assistant to help you reach your genetic potential.")
 
     # Initialize session state for data
     if "data_loaded" not in st.session_state:
