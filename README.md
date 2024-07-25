@@ -1,6 +1,4 @@
-# HealthAssess
-
-**Developers**: Collin Caram and Pranav Narahari
+# dnAI
 
 **About**: Welcome to HealthAssess, your personal chat assistant to help you reach your genetic potential.
 
