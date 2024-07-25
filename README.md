@@ -4,7 +4,7 @@
 
 ## How to Use the Web App:
 
-1. Using https://6b3c-70-116-235-226.ngrok-free.app, provide your name, email (can be a fake one if you prefer), and DNA. Use one of the provided DNA files we have in the tests folder.
+1. Using https://6b3c-70-116-235-226.ngrok-free.app, provide your name, email, and DNA. Use one of the provided DNA files we have in the tests folder.
 2. Allow time for the models to run, this will take around 60 seconds.
 3. Check out your insights and links to supplement products! Then take advantage of the chat bot to ask more personalized questions about your DNA. You could ask anything, but here are some examples to get you started:
    - What are the potential drawbacks of these supplements?
